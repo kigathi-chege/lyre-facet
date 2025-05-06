@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('facet_values', function (Blueprint $table) {
-            basic_fields($table, 'facet_values');
-            $table->string('name');
-            $table->foreignId('facet_id')->constrained()->cascadeOnDelete();
-        });
+        if (!Schema::hasTable('facet_values')) {
+            Schema::create('facet_values', function (Blueprint $table) {
+                basic_fields($table, 'facet_values');
+                $table->string('name');
+                $table->foreignId('facet_id')->constrained()->cascadeOnDelete();
+            });
+        }
     }
 
     /**

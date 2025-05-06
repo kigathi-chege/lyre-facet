@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('facets', function (Blueprint $table) {
-            basic_fields($table, 'facets');
-            $table->string('name');
-        });
+        if (!Schema::hasTable('facets')) {
+            Schema::create('facets', function (Blueprint $table) {
+                basic_fields($table, 'facets');
+                $table->string('name');
+            });
+        }
     }
 
     /**
