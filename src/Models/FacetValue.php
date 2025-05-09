@@ -13,6 +13,8 @@ class FacetValue extends Model
 
     protected $with = ['facet'];
 
+    protected $visible = ['facet_name'];
+
     public function facet()
     {
         return $this->belongsTo(Facet::class);
@@ -21,10 +23,5 @@ class FacetValue extends Model
     public function getFacetNameAttribute()
     {
         return $this->facet->name;
-    }
-
-    public static function includeSerializableColumns()
-    {
-        return ['facet_name'];
     }
 }
