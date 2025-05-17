@@ -13,7 +13,7 @@ class FacetValue extends Model
 
     protected $with = ['facet'];
 
-    protected $visible = ['facet_name'];
+    protected array $included = ['facet_name'];
 
     public function facet()
     {

@@ -23,9 +23,9 @@ class FacetResource extends Resource
 
     protected static ?string $navigationIcon = 'gmdi-category';
 
-    protected static ?string $navigationGroup = 'Content';
+    protected static ?string $navigationGroup = 'Organization';
 
-    protected static ?int $navigationSort = 15;
+    protected static ?int $navigationSort = 52;
 
     public static function form(Form $form): Form
     {
@@ -38,6 +38,12 @@ class FacetResource extends Resource
                     ->maxLength(255),
                 TiptapEditor::make('description')
                     ->columnSpanFull(),
+                Forms\Components\Select::make('access')
+                    ->options([
+                        'public' => 'Public',
+                        'private' => 'Private',
+                    ])
+                    ->default('public'),
             ]);
     }
 
@@ -58,6 +64,14 @@ class FacetResource extends Resource
                 Tables\Columns\TextColumn::make('facet_values_count')
                     ->badge()
                     ->color('danger'),
+                Tables\Columns\TextColumn::make('access')
+                    ->badge()
+                    ->color(
+                        fn($state) => match ($state) {
+                            'public' => 'success',
+                            'private' => 'danger',
+                        }
+                    ),
             ])
             ->filters([
                 //

@@ -21,9 +21,9 @@ class FacetValueResource extends Resource
 
     protected static ?string $navigationIcon = 'gmdi-diamond';
 
-    protected static ?string $navigationGroup = 'Content';
+    protected static ?string $navigationGroup = 'Organization';
 
-    protected static ?int $navigationSort = 16;
+    protected static ?int $navigationSort = 53;
 
     public static function form(Form $form): Form
     {

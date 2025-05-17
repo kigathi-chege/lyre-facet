@@ -17,6 +17,12 @@ return new class extends Migration
                 $table->string('name');
             });
         }
+
+        if (!Schema::hasColumn('facets', 'access')) {
+            Schema::table('facets', function (Blueprint $table) {
+                $table->enum('access', ['public', 'private'])->default('public');
+            });
+        }
     }
 
     /**
