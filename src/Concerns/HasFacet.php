@@ -25,4 +25,16 @@ trait HasFacet
             'facet_value_id'    // Local key on the faceted_entities table...
         )->where('entity_type', self::class);
     }
+
+    /**
+     * @param int[] $facetValueIds
+     * @return FacetValue[]
+     * 
+     * This function deletes all attachments and creates new ones from fileIds
+     */
+    public function attachFacetValues($facetValueIds)
+    {
+        $this->facetedEntities()->delete();
+        return $this->facetedEntities()->createMany(array_map(fn($facetValueId) => ['facet_value_id' => $facetValueId], $facetValueIds));
+    }
 }
