@@ -34,6 +34,9 @@ trait HasFacet
      */
     public function attachFacetValues($facetValueIds)
     {
+        if (!is_array($facetValueIds)) {
+            $facetValueIds = [$facetValueIds];
+        }
         $this->facetedEntities()->delete();
         return $this->facetedEntities()->createMany(array_map(fn($facetValueId) => ['facet_value_id' => $facetValueId], $facetValueIds));
     }
