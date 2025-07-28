@@ -39,6 +39,9 @@ class FacetValuesRelationManager extends RelationManager
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->striped()
+            ->deferLoading()
+            ->defaultSort('created_at', 'desc');
     }
 }

@@ -73,6 +73,8 @@ class FacetValueResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
+            ->striped()
+            ->deferLoading()
             ->defaultSort('created_at', 'desc');
     }
 
