@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('facet_values')) {
-            Schema::create('facet_values', function (Blueprint $table) {
-                basic_fields($table, 'facet_values');
+        $prefix = config('lyre.table_prefix');
+        $tableName = $prefix . 'facet_values';
+
+        if (!Schema::hasTable($tableName)) {
+            Schema::create($tableName, function (Blueprint $table) use ($tableName, $prefix) {
+                basic_fields($table, $tableName);
                 $table->string('name');
                 $table->foreignId('facet_id')->constrained()->cascadeOnDelete();
             });
@@ -25,6 +28,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('facet_values');
+        $prefix = config('lyre.table_prefix');
+        $tableName = $prefix . 'facet_values';
+
+        Schema::dropIfExists($tableName);
     }
 };

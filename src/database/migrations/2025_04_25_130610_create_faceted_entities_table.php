@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('faceted_entities')) {
-            Schema::create('faceted_entities', function (Blueprint $table) {
+        $prefix = config('lyre.table_prefix');
+        $tableName = $prefix . 'faceted_entities';
+
+        if (!Schema::hasTable($tableName)) {
+            Schema::create($tableName, function (Blueprint $table) use ($tableName, $prefix) {
                 $table->id();
                 $table->timestamps();
                 $table->morphs('entity');
-                $table->foreignId('facet_value_id')->constrained('facet_values')->cascadeOnDelete();
+                $table->foreignId('facet_value_id')->constrained($prefix . 'facet_values')->cascadeOnDelete();
             });
         }
     }
@@ -26,6 +29,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('faceted_entities');
+        $prefix = config('lyre.table_prefix');
+        $tableName = $prefix . 'faceted_entities';
+
+        Schema::dropIfExists($tableName);
     }
 };

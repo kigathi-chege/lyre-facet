@@ -11,15 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('facets')) {
-            Schema::create('facets', function (Blueprint $table) {
-                basic_fields($table, 'facets');
+        $prefix = config('lyre.table_prefix');
+        $tableName = $prefix . 'facets';
+
+        if (!Schema::hasTable($tableName)) {
+            Schema::create($tableName, function (Blueprint $table) use ($tableName, $prefix) {
+                basic_fields($table, $tableName);
                 $table->string('name');
             });
         }
 
-        if (!Schema::hasColumn('facets', 'access')) {
-            Schema::table('facets', function (Blueprint $table) {
+        if (!Schema::hasColumn($tableName, 'access')) {
+            Schema::table($tableName, function (Blueprint $table) {
                 $table->enum('access', ['public', 'private'])->default('public');
             });
         }
@@ -30,6 +33,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('facets');
+        $prefix = config('lyre.table_prefix');
+        $tableName = $prefix . 'facets';
+
+        Schema::dropIfExists($tableName);
     }
 };
