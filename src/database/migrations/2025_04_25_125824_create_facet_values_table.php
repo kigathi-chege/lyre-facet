@@ -21,6 +21,13 @@ return new class extends Migration
                 $table->foreignId('facet_id')->constrained()->cascadeOnDelete();
             });
         }
+
+        if (!Schema::hasColumn($tableName, 'parent_id')) {
+            Schema::table($tableName, function (Blueprint $table) use ($tableName) {
+                $table->foreignId('parent_id')->nullable()->constrained($tableName)->nullOnDelete();
+                $table->integer('order')->default(0);
+            });
+        }
     }
 
     /**
