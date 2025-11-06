@@ -2,7 +2,7 @@
   "name": "lyre/facet",
   "description": "Simple categorization module for complex relationships",
   "license": "MIT",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "keywords": [
     "php",
     "github",
@@ -41,9 +41,6 @@
   "minimum-stability": "stable",
   "require": {
     "php": "^8.2",
-    "awcodes/filament-tiptap-editor": "^3.5",
-    "filament/filament": "^3.3",
-    "codeat3/blade-google-material-design-icons": "^1.20",
     "lyre/lyre": "^1.1"
   },
   "extra": {
