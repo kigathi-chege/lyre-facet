@@ -38,6 +38,17 @@ class FacetResource extends Resource
                     ->maxLength(255),
                 TiptapEditor::make('description')
                     ->columnSpanFull(),
+                Forms\Components\Select::make('parent_id')
+                    ->label('Parent Facet')
+                    ->relationship('parent', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->helperText('Select a parent facet to create a hierarchy. Leave empty for root facets.')
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, Forms\Set $set, $get) {
+                        // Prevent circular references - validation happens in rules
+                    })
+                    ->getOptionLabelFromRecordUsing(fn($record) => $record->name),
                 Forms\Components\Select::make('access')
                     ->options([
                         'public' => 'Public',
@@ -45,6 +56,29 @@ class FacetResource extends Resource
                     ])
                     ->default('public'),
             ]);
+        // ->rules([
+        //     'parent_id' => [
+        //         function ($attribute, $value, $fail) {
+        //             if ($value) {
+        //                 $facet = Facet::find($value);
+        //                 if ($facet && request()->route('record')) {
+        //                     $currentFacet = Facet::find(request()->route('record'));
+        //                     if ($currentFacet) {
+        //                         // Check if the selected parent is a descendant of current facet (circular reference)
+        //                         $descendants = $currentFacet->descendants();
+        //                         if ($descendants->contains('id', $value)) {
+        //                             $fail('Cannot set a descendant facet as parent (circular reference).');
+        //                         }
+        //                         // Check if trying to set itself as parent
+        //                         if ($currentFacet->id == $value) {
+        //                             $fail('A facet cannot be its own parent.');
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         },
+        //     ],
+        // ]);
     }
 
     public static function table(Table $table): Table
@@ -61,6 +95,15 @@ class FacetResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('parent.name')
+                    ->label('Parent')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('children_count')
+                    ->label('Children')
+                    ->counts('children')
+                    ->badge()
+                    ->color('info'),
                 Tables\Columns\TextColumn::make('facet_values_count')
                     ->badge()
                     ->color('danger'),
@@ -116,7 +159,7 @@ class FacetResource extends Resource
             static::scopeEloquentQueryToTenant($query, $tenant);
         }
 
-        return $query->withCount('facetValues');
+        return $query->withCount(['facetValues', 'children']);
     }
 
     public static function shouldRegisterNavigation(): bool

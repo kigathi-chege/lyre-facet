@@ -9,4 +9,6 @@ Route::prefix('api')
             'facets' => \Lyre\Facet\Http\Controllers\FacetController::class,
             'facetvalues' => \Lyre\Facet\Http\Controllers\FacetValueController::class,
         ]);
+
+        Route::get('facets/hierarchy', [\Lyre\Facet\Http\Controllers\FacetController::class, 'hierarchy']);
     });

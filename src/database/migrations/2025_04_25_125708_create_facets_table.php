@@ -18,12 +18,12 @@ return new class extends Migration
             Schema::create($tableName, function (Blueprint $table) use ($tableName, $prefix) {
                 basic_fields($table, $tableName);
                 $table->string('name');
-            });
-        }
 
-        if (!Schema::hasColumn($tableName, 'access')) {
-            Schema::table($tableName, function (Blueprint $table) {
                 $table->enum('access', ['public', 'private'])->default('public');
+                $table->foreignId('parent_id')->nullable()->constrained($tableName)->nullOnDelete();
+                $table->integer('order')->default(0);
+
+                $table->index(['parent_id', 'order']);
             });
         }
     }

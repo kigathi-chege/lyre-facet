@@ -3,6 +3,8 @@
 namespace Lyre\Facet\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Lyre\Model;
 
 class Facet extends Model
@@ -11,8 +13,65 @@ class Facet extends Model
 
     const ID_COLUMN = 'slug';
 
+    protected array $included = ['parent', 'children'];
+
     public function facetValues()
     {
         return $this->hasMany(FacetValue::class);
+    }
+
+    /**
+     * Parent facet (for hierarchical facets)
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Facet::class, 'parent_id');
+    }
+
+    /**
+     * Child facets (for hierarchical facets)
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(Facet::class, 'parent_id')->orderBy('order');
+    }
+
+    /**
+     * Get all ancestors (parent, grandparent, etc.)
+     */
+    public function ancestors()
+    {
+        $ancestors = collect();
+        $current = $this->parent;
+
+        while ($current) {
+            $ancestors->push($current);
+            $current = $current->parent;
+        }
+
+        return $ancestors->reverse();
+    }
+
+    /**
+     * Get all descendants (children, grandchildren, etc.)
+     */
+    public function descendants()
+    {
+        $descendants = collect();
+
+        foreach ($this->children as $child) {
+            $descendants->push($child);
+            $descendants = $descendants->merge($child->descendants());
+        }
+
+        return $descendants;
+    }
+
+    /**
+     * Scope: Get root facets (no parent)
+     */
+    public function scopeRoots($query)
+    {
+        return $query->whereNull('parent_id');
     }
 }
