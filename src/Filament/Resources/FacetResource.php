@@ -2,6 +2,7 @@
 
 namespace Lyre\Facet\Filament\Resources;
 
+use Closure;
 use Lyre\Facet\Filament\RelationManagers\FacetValuesRelationManager;
 use Lyre\Facet\Filament\Resources\FacetResource\Pages;
 use Lyre\Facet\Filament\Resources\FacetResource\RelationManagers;
@@ -46,9 +47,46 @@ class FacetResource extends Resource
                     ->helperText('Select a parent facet to create a hierarchy. Leave empty for root facets.')
                     ->reactive()
                     ->afterStateUpdated(function ($state, Forms\Set $set, $get) {
-                        // Prevent circular references - validation happens in rules
+                        // Additional reactive behaviors can be handled here if needed
                     })
-                    ->getOptionLabelFromRecordUsing(fn($record) => $record->name),
+                    ->getOptionLabelFromRecordUsing(fn($record) => $record->name)
+                    ->rules([
+                        function (string $attribute, $value, Closure $fail) {
+                            if (! $value) {
+                                return;
+                            }
+
+                            $recordId = request()?->route('record');
+
+                            if (! $recordId) {
+                                return;
+                            }
+
+                            $currentFacet = Facet::find($recordId);
+
+                            if (! $currentFacet) {
+                                return;
+                            }
+
+                            if ((int) $currentFacet->id === (int) $value) {
+                                $fail('A facet cannot be its own parent.');
+
+                                return;
+                            }
+
+                            $descendants = method_exists($currentFacet, 'descendants')
+                                ? $currentFacet->descendants()
+                                : collect();
+
+                            if ($descendants instanceof \Illuminate\Database\Eloquent\Builder) {
+                                $descendants = $descendants->get();
+                            }
+
+                            if ($descendants->contains('id', (int) $value)) {
+                                $fail('Cannot set a descendant facet as parent (circular reference).');
+                            }
+                        },
+                    ]),
                 Forms\Components\Select::make('access')
                     ->options([
                         'public' => 'Public',
