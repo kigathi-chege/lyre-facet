@@ -13,7 +13,9 @@ class Facet extends Model
 
     const ID_COLUMN = 'slug';
 
-    protected array $included = ['parent', 'children'];
+    // Removed 'parent' and 'children' from default included to prevent circular references
+    // They can still be loaded explicitly via query parameters (e.g., ?with=parent,children)
+    protected array $included = ['parent_name'];
 
     public function facetValues()
     {
@@ -73,5 +75,10 @@ class Facet extends Model
     public function scopeRoots($query)
     {
         return $query->whereNull('parent_id');
+    }
+
+    public function getParentNameAttribute()
+    {
+        return $this->parent?->name;
     }
 }

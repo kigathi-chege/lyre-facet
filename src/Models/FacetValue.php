@@ -13,9 +13,9 @@ class FacetValue extends Model
 
     const ID_COLUMN = 'slug';
 
-    protected $with = ['facet'];
+    // protected $with = ['facet'];
 
-    protected array $included = ['facet_name', 'children', 'parent'];
+    protected array $included = ['facet_name'];
 
     protected $casts = [
         'order' => 'integer',
