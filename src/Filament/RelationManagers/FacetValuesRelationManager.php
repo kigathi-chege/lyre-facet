@@ -4,7 +4,7 @@ namespace Lyre\Facet\Filament\RelationManagers;
 
 use Lyre\Facet\Filament\Resources\FacetValueResource;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,7 +15,7 @@ class FacetValuesRelationManager extends RelationManager
 {
     protected static string $relationship = 'facetValues';
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return FacetValueResource::form($form);
     }
@@ -29,15 +29,15 @@ class FacetValuesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                \Filament\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                \Filament\Actions\EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->striped()

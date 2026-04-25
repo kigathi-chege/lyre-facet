@@ -8,7 +8,7 @@ use Lyre\Facet\Filament\Resources\FacetResource\Pages;
 use Lyre\Facet\Filament\Resources\FacetResource\RelationManagers;
 use Lyre\Facet\Models\Facet;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Facades\Filament;
 use Filament\Tables;
@@ -22,13 +22,17 @@ class FacetResource extends Resource
 {
     protected static ?string $model = Facet::class;
 
-    protected static ?string $navigationIcon = 'gmdi-category';
+    protected static \BackedEnum|string|null $navigationIcon = 'gmdi-category';
 
-    protected static ?string $navigationGroup = 'Organization';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Organization';
+    }
+
 
     protected static ?int $navigationSort = 52;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -158,11 +162,11 @@ class FacetResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                \Filament\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->striped()

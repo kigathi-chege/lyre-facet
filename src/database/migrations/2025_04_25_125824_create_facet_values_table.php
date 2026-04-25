@@ -18,7 +18,7 @@ return new class extends Migration
             Schema::create($tableName, function (Blueprint $table) use ($tableName, $prefix) {
                 basic_fields($table, $tableName);
                 $table->string('name');
-                $table->foreignId('facet_id')->constrained()->cascadeOnDelete();
+                $table->foreignId('facet_id')->constrained($prefix . 'facets')->cascadeOnDelete();
             });
         }
 
