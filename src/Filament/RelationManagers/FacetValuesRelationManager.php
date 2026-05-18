@@ -31,11 +31,11 @@ class FacetValuesRelationManager extends RelationManager
             ->headerActions([
                 \Filament\Actions\CreateAction::make(),
             ])
-            ->actions([
+            ->recordActions([
                 \Filament\Actions\EditAction::make(),
                 \Filament\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 \Filament\Actions\BulkActionGroup::make([
                     \Filament\Actions\DeleteBulkAction::make(),
                 ]),
