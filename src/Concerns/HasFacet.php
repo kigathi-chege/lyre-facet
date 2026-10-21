@@ -2,6 +2,7 @@
 
 namespace Lyre\Facet\Concerns;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Lyre\Facet\Models\FacetedEntity;
@@ -27,17 +28,30 @@ trait HasFacet
     }
 
     /**
-     * @param int[] $facetValueIds
-     * @return FacetValue[]
-     * 
-     * This function deletes all attachments and creates new ones from fileIds
+     * Replace the model's facet values with the given ones.
+     *
+     * Pass $onlyFacetIds to replace only the values of those facets and keep the rest (e.g. a
+     * category picker must not remove an access tag set elsewhere). Without it every facet
+     * value is replaced, as before.
+     *
+     * @param  int|int[]  $facetValueIds
+     * @param  int[]|null  $onlyFacetIds
+     * @return Collection<int, FacetedEntity>
      */
-    public function attachFacetValues($facetValueIds)
+    public function attachFacetValues($facetValueIds, ?array $onlyFacetIds = null)
     {
-        if (!is_array($facetValueIds)) {
+        if (! is_array($facetValueIds)) {
             $facetValueIds = [$facetValueIds];
         }
-        $this->facetedEntities()->delete();
-        return $this->facetedEntities()->createMany(array_map(fn($facetValueId) => ['facet_value_id' => $facetValueId], $facetValueIds));
+
+        $existing = $this->facetedEntities();
+
+        if ($onlyFacetIds !== null) {
+            $existing->whereIn('facet_value_id', FacetValue::query()->whereIn('facet_id', $onlyFacetIds)->select('id'));
+        }
+
+        $existing->delete();
+
+        return $this->facetedEntities()->createMany(array_map(fn ($facetValueId) => ['facet_value_id' => $facetValueId], array_values(array_unique($facetValueIds))));
     }
 }
